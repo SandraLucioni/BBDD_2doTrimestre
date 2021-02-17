@@ -23,7 +23,7 @@ universidad(# );
 CREATE TABLE
 ```
 
-![image](codeCaptures/collegeAlumnoTable.png)
+![image](practicas/codeCaptures/collegeAlumnoTable.png)
 
 
 * **_Tabla asignatura:_** 
@@ -40,7 +40,7 @@ universidad(#     CONSTRAINT num_horas_ck CHECK (num_horas BETWEEN 1 AND 100)
 universidad(# );
 CREATE TABLE
 ```
-![image](codeCaptures/collegeAsignaturaTable.png)
+![image](practicas/codeCaptures/collegeAsignaturaTable.png)
 
 
 * **_Tabla departamento:_** 
@@ -52,7 +52,7 @@ universidad(#     CONSTRAINT id_departamento_pk PRIMARY KEY(id)
 universidad(# );
 CREATE TABLE
 ```
-![image](codeCaptures/collegeDepartamentoTable.png)
+![image](practicas/codeCaptures/collegeDepartamentoTable.png)
 
 
 * **_Tabla calificación:_** 
@@ -70,7 +70,7 @@ universidad(#     CONSTRAINT calificacion_ck CHECK(calificacion BETWEEN 0 AND 10
 universidad(# );
 CREATE TABLE
 ```
-![image](codeCaptures/collegeCalificacionTable.png)
+![image](practicas/codeCaptures/collegeCalificacionTable.png)
 
 * **_Constraint añadido:_**
 ```sql
