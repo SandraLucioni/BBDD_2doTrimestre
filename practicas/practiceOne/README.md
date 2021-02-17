@@ -34,3 +34,46 @@
 ![image](practicas/codeCaptures/paper2bibliotecaPart1.png)
 ![image](practicas/codeCaptures/paper2bibliotecaPart2.png)
 
+
+
+# PRACTICA 2
+
+## EJERCICIO UNIVERSIDAD
+
+### **1**
+![image]()
+### **2**
+![image]()
+### **3**
+![image]()
+### **4**
+![image]()
+### **5**
+![image]()
+### **6**
+![image]()
+### **7**
+![image]()
+### **8**
+![image]()
+### **9**
+![image]()
+### **10**
+![image]()
+### **11**
+![image]()
+### **12**
+![image]()
+### **13**
+![image]()
+### **14**
+![image]()
+### **15**
+![image]()
+### **16**
+![image]()
+### **17**
+![image]()
+
+
+
