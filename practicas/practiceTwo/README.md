@@ -23,8 +23,7 @@ universidad(# );
 CREATE TABLE
 ```
 
-![image](practicas/codeCaptures/collegeAlumnoTable.png)
-
+![image](codeCaptures/collegeAlumnoTable.png)
 
 * **_Tabla asignatura:_** 
 ```sql
@@ -40,7 +39,7 @@ universidad(#     CONSTRAINT num_horas_ck CHECK (num_horas BETWEEN 1 AND 100)
 universidad(# );
 CREATE TABLE
 ```
-![image](practicas/codeCaptures/collegeAsignaturaTable.png)
+![image](codeCaptures/collegeAsignaturaTable.png)
 
 
 * **_Tabla departamento:_** 
@@ -52,7 +51,7 @@ universidad(#     CONSTRAINT id_departamento_pk PRIMARY KEY(id)
 universidad(# );
 CREATE TABLE
 ```
-![image](practicas/codeCaptures/collegeDepartamentoTable.png)
+![image](codeCaptures/collegeDepartamentoTable.png)
 
 
 * **_Tabla calificación:_** 
@@ -70,7 +69,7 @@ universidad(#     CONSTRAINT calificacion_ck CHECK(calificacion BETWEEN 0 AND 10
 universidad(# );
 CREATE TABLE
 ```
-![image](practicas/codeCaptures/collegeCalificacionTable.png)
+![image](codeCaptures/collegeCalificacionTable.png)
 
 * **_Constraint añadido:_**
 ```sql
@@ -152,7 +151,7 @@ universidad-# WHERE calificacion IS NULL;
 UPDATE 6
 ```
 
-![image](practicas/codeCaptures/collegeTableCalificacionWithCalification.png)
+![image](codeCaptures/collegeTableCalificacionWithCalification.png)
 
 * _Añadir a la base de datos la asignatura ‘PROGRAMACIÓN EN PYTHON’, con 200 horas de duración, un precio de 500,00 y adscrita al departamento cuyo id es 1:_
 
