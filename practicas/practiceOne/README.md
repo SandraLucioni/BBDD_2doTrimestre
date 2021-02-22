@@ -34,4 +34,3 @@
 ![image](codeCaptures/paper2bibliotecaPart1.png)
 ![image](codeCaptures/paper2bibliotecaPart2.png)
 
-
