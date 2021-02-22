@@ -13,7 +13,7 @@ Ahora está conectado a la base de datos «empresa» con el usuario «postgres»
 ```sql
 empresa=# SELECT * FROM empleado;
 ```
-![image](codeCaptures\selectTableEmpleado.png)
+![image](codeCaptures/selectTableEmpleado.png)
 
 **2. Mostrar códigos de departamento distintos de la tabla empleado.**
 ```sql
