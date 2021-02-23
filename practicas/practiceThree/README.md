@@ -8,16 +8,43 @@ CREATE DATABASE
 postgres=# \c empresa postgres;
 Ahora está conectado a la base de datos «empresa» con el usuario «postgres».
 ```
+## Definición de la tabla empleado
 
-**1. Mostrar toda la información de la tabla empleado.**
+```sql
+empresa=> \d empleado
+                                Table "public.empleado"
+            Column             |         Type          | Collation | Nullable | Default 
+-------------------------------+-----------------------+-----------+----------+---------
+ codigo_empleado               | integer               |           | not null | 
+ codigo_departamento           | integer               |           | not null | 
+ extension_telefonica_empleado | smallint              |           | not null | 
+ fecha_nacimiento_empleado     | date                  |           | not null | 
+ fecha_ingreso_empleado        | date                  |           | not null | 
+ salario_base_empleado         | numeric               |           | not null | 
+ comision_empleado             | numeric               |           |          | 
+ numero_hijos_empleado         | smallint              |           | not null | 
+ nombre_empleado               | character varying(16) |           | not null | 
+Indexes:
+    "empleado_pkey" PRIMARY KEY, btree (codigo_empleado)
+Foreign-key constraints:
+    "trabaja_en" FOREIGN KEY (codigo_departamento) REFERENCES departamento(codigo_departamento) ON UPDATE CASCADE ON DELETE CASCADE
+```
+
+**1. Mostrar toda la información de la tabla `empleado`.**
 ```sql
 empresa=# SELECT * FROM empleado;
 ```
+
+Resultado:
 ![image](codeCaptures/selectTableEmpleado.png)
 
 **2. Mostrar códigos de departamento distintos de la tabla empleado.**
 ```sql
 empresa=# SELECT codigo_departamento FROM empleado;
+```
+
+Resultado:
+```sql
  codigo_departamento
 ---------------------
                  121
@@ -41,6 +68,10 @@ empresa=# SELECT codigo_departamento FROM empleado;
 empresa=# SELECT nombre_empleado, SUM(salario_base_empleado + COALESCE(comision_empleado, 0)) as salario_total FROM empleado
 empresa-# GROUP BY nombre_empleado
 empresa-# ORDER BY salario_total ASC;
+```
+
+Resultado:
+```sql
  nombre_empleado  | salario_total
 ------------------+---------------
  MUOZ, AZUCENA    |          1750
@@ -57,6 +88,10 @@ empresa-# ORDER BY salario_total ASC;
 **4. Muestra el nombre y fecha de nacimiento de todos los empleados.**
  ```sql
 empresa=# SELECT nombre_empleado, fecha_nacimiento_empleado FROM empleado;
+```
+
+Resultado:
+```sql
  nombre_empleado  | fecha_nacimiento_empleado
 ------------------+---------------------------
  PONS, CESAR      | 1949-10-11
@@ -76,6 +111,10 @@ empresa=# SELECT nombre_empleado, fecha_nacimiento_empleado FROM empleado;
 ```sql
 empresa=# SELECT nombre_empleado FROM empleado
 empresa-# WHERE codigo_departamento = 130 AND salario_base_empleado > 1500;
+```
+
+Resultado:
+```sql
  nombre_empleado
 -----------------
  FLOR, DOROTEA
@@ -88,6 +127,10 @@ empresa-# WHERE codigo_departamento = 130 AND salario_base_empleado > 1500;
 ```sql
 empresa=# SELECT codigo_empleado, nombre_empleado FROM empleado
 empresa-# WHERE comision_empleado IS NOT NULL;
+```
+
+Resultado:
+```sql
  codigo_empleado | nombre_empleado
 -----------------+------------------
              120 | LASA, MARIO
@@ -111,6 +154,10 @@ empresa-# WHERE comision_empleado IS NOT NULL;
 ```sql
 empresa=# SELECT nombre_empleado, salario_base_empleado FROM empleado
 empresa-# WHERE comision_empleado IS NULL;
+```
+
+Resultado:
+```sql
  nombre_empleado | salario_base_empleado
 -----------------+-----------------------
  PONS, CESAR     |                  3100
@@ -122,16 +169,40 @@ empresa-# WHERE comision_empleado IS NULL;
 (20 filas)
 ```
 
-8. Muestre el nombre de los empleados que trabajan como FINANZAS, ORGANIZACION o PROCESO DE DATOS y su salario más de 3000.
+**8. Muestre el nombre de los empleados que trabajan como `FINANZAS`, `ORGANIZACION` o `PROCESO DE DATOS` y su salario más de 3000.**
 ```sql
-
+empresa=# SELECT nombre_empleado, codigo_departamento, SUM(salario_base_empleado + COALESCE(comision_empleado, 0)) as salario_total
+empresa-# FROM empleado
+empresa-# WHERE codigo_departamento = 130
+empresa-# OR codigo_departamento = 120
+empresa-# OR codigo_departamento= 122
+empresa-# AND  salario_base_empleado + COALESCE(comision_empleado, 0) > 3000
+empresa-# GROUP BY nombre_empleado, codigo_departamento;
 ```
 
-**9. Muestre la lista de empleados que se han unido a la empresa antes del 30 de junio de 1.990 o después del 31 de diciembre de 1.997.**
+Resultado:
+```sql
+ nombre_empleado | codigo_departamento | salario_total
+-----------------+---------------------+---------------
+ CAMPS, AURELIO  |                 122 |          4500
+ FIERRO, CLAUDIA |                 130 |          4000
+ FLOR, DOROTEA   |                 130 |          2900
+ GARCIA, AUGUSTO |                 130 |          4200
+ GIL, GLORIA     |                 120 |          2700
+ POLO, OTILIA    |                 122 |          3800
+ SANZ, CORNELIO  |                 122 |          4050
+(7 filas)
+```
+
+**9. Muestre la lista de empleados que se han unido a la empresa antes del 30 de junio de 1990 o después del 31 de diciembre de 1997.**
 ```sql
 empresa=# SELECT fecha_ingreso_empleado FROM empleado
 empresa-# WHERE fecha_ingreso_empleado < '1990-06-30'
 empresa-# OR fecha_ingreso_empleado > '1997-12-31';
+```
+
+Resultado:
+```sql
  fecha_ingreso_empleado
 ------------------------
  1970-02-15
@@ -145,6 +216,10 @@ empresa-# OR fecha_ingreso_empleado > '1997-12-31';
 **10. Mostrar la fecha actual.**
 ```sql
 empresa=# SELECT CURRENT_DATE ;
+```
+
+Resultado:
+```sql
  current_date
 --------------
  2021-02-17
@@ -157,6 +232,10 @@ empresa=# SELECT codigo_empleado, nombre_empleado, codigo_departamento, fecha_in
 empresa-# FROM empleado
 empresa-# ORDER BY codigo_departamento ASC,
 empresa-#     fecha_ingreso_empleado DESC;
+```
+
+Resultado:
+```sql
  codigo_empleado | nombre_empleado  | codigo_departamento | fecha_ingreso_empleado
 -----------------+------------------+---------------------+------------------------
              260 | LOPEZ, ANTONIO   |                 100 | 1988-07-12
@@ -172,13 +251,17 @@ empresa-#     fecha_ingreso_empleado DESC;
 (34 filas)
 ```
 
-**12. ¿Que empleados se unieron antes de 1.991?**
+**12. ¿Que empleados se unieron antes de 1991?**
 
 >He dado por hecho que 1991 no inclusive
 
 ```sql
 empresa=# SELECT codigo_empleado, nombre_empleado, fecha_ingreso_empleado FROM empleado
 empresa-# WHERE fecha_ingreso_empleado < '1991-01-01';
+```
+
+Resultado:
+```sql
  codigo_empleado | nombre_empleado | fecha_ingreso_empleado
 -----------------+-----------------+------------------------
              110 | PONS, CESAR     | 1970-02-15
@@ -197,6 +280,10 @@ empresa=# SELECT codigo_empleado, nombre_empleado, SUM(salario_base_empleado + C
 empresa-# FROM empleado
 empresa-# WHERE numero_hijos_empleado = 0
 empresa-# GROUP BY nombre_empleado, codigo_empleado;
+```
+
+Resultado:
+```sql
  codigo_empleado | nombre_empleado  | salario_total | numero_hijos_empleado
 -----------------+------------------+---------------+-----------------------
              150 | PEREZ, JULIO     |          4400 |                     0
@@ -213,17 +300,25 @@ empresa-# GROUP BY nombre_empleado, codigo_empleado;
 ```sql
 empresa=# SELECT codigo_empleado, nombre_empleado, comision_empleado FROM empleado
 empresa-# WHERE comision_empleado > salario_base_empleado;
+```
+
+Resultado:
+```sql
  codigo_empleado | nombre_empleado | comision_empleado
 -----------------+-----------------+-------------------
              550 | SANTOS, SANCHO  |              1200
 (1 fila)
 ```
 
-**15. Empleados en el orden ascendente de departamento de aquellos empleados que se incorporaron después de la segunda mitad de 1.998.**
+**15. Empleados en el orden ascendente de departamento de aquellos empleados que se incorporaron después de la segunda mitad de 1998.**
 ```sql
 empresa=# SELECT codigo_empleado, nombre_empleado, codigo_departamento FROM empleado
 empresa-# WHERE fecha_ingreso_empleado BETWEEN '1998-06-01' AND '1998-12-31'
 empresa-# ORDER BY codigo_departamento ASC;
+```
+
+Resultado:
+```sql
  codigo_empleado | nombre_empleado | codigo_departamento
 -----------------+-----------------+---------------------
              360 | LARA, DORINDA   |                 111
@@ -241,6 +336,10 @@ empresa-#     date_part('year', age(now(), fecha_ingreso_empleado))*12 + EXTRACT
 empresa-# FROM empleado
 empresa-# WHERE ROUND((salario_base_empleado + COALESCE(comision_empleado, 0)/30),2) >= 70.00
 empresa-# GROUP BY nombre_empleado, meses;
+```
+
+Resultado:
+```sql
  nombre_empleado  | salario_diario| meses
 ------------------+---------------+-------
  GIL, GLORIA      |         90.00 |   396
@@ -261,6 +360,10 @@ empresa=# SELECT nombre_empleado, codigo_departamento FROM empleado
 empresa-# WHERE codigo_departamento = 120
 empresa-# OR codigo_departamento = 122
 empresa-# ORDER BY nombre_empleado DESC;
+```
+
+Resultado:
+```sql
  nombre_empleado | codigo_departamento
 -----------------+---------------------
  SANZ, CORNELIO  |                 122
@@ -272,11 +375,15 @@ empresa-# ORDER BY nombre_empleado DESC;
 (6 filas)
 ```
 
-**18. Enumere los empleados que trabajan para el DEPARTAMENTO 110 o 120.**
+**18. Enumere los empleados que trabajan para el `DEPARTAMENTO` 110 o 120.**
 ```sql
 empresa=# SELECT codigo_empleado, nombre_empleado, codigo_departamento FROM empleado
 empresa-# WHERE codigo_departamento = 110
 empresa-# OR codigo_departamento = 120;
+```
+
+Resultado:
+```sql
  codigo_empleado | nombre_empleado | codigo_departamento
 -----------------+-----------------+---------------------
              180 | PEREZ, MARCOS   |                 110
@@ -293,6 +400,10 @@ empresa-# OR codigo_departamento = 120;
 ```sql
 empresa=# SELECT nombre_empleado, fecha_ingreso_empleado FROM empleado
 empresa-# WHERE EXTRACT(MONTH FROM fecha_ingreso_empleado) = 08;
+```
+
+Resultado:
+```sql
  nombre_empleado | fecha_ingreso_empleado
 -----------------+------------------------
 (0 filas)
@@ -306,6 +417,10 @@ empresa-#     SUM((salario_base_empleado + COALESCE(comision_empleado, 0))*12) a
 empresa-# FROM empleado
 empresa-# WHERE ((salario_base_empleado + COALESCE(comision_empleado, 0))*12) BETWEEN 25000 AND 35000
 empresa-# GROUP BY nombre_empleado;
+```
+
+Resultado:
+```sql
  nombre_empleado | salario_total_anual
 -----------------+---------------------
  FLOR, DOROTEA   |               34800
@@ -323,6 +438,10 @@ empresa-# GROUP BY nombre_empleado;
 empresa=# SELECT nombre_empleado
 empresa-# FROM empleado
 empresa-# WHERE nombre_empleado LIKE '%, _____';
+```
+
+Resultado:
+```sql
  nombre_empleado
 -----------------
  PONS, CESAR
@@ -340,6 +459,10 @@ empresa-# WHERE nombre_empleado LIKE '%, _____';
 ```sql
 empresa=# SELECT nombre_empleado FROM empleado
 empresa-# WHERE nombre_empleado LIKE '%, A______';
+```
+
+Resultado:
+```sql
  nombre_empleado
 -----------------
  ALBA, ADRIANA
@@ -354,6 +477,10 @@ empresa-# WHERE nombre_empleado LIKE '%, A______';
 ```sql
 empresa=# SELECT nombre_empleado FROM empleado
 empresa-# WHERE nombre_empleado LIKE '__R%';
+```
+
+Resultado:
+```sql
  nombre_empleado
 -----------------
  TEROL, LUCIANO
@@ -376,6 +503,10 @@ empresa-# WHERE nombre_empleado LIKE '__R%';
 ```sql
 empresa=# SELECT nombre_empleado FROM empleado
 empresa-# WHERE nombre_empleado LIKE 'G%Z%';
+```
+
+Resultado:
+```sql
  nombre_empleado
 -----------------
  GALVEZ, PILAR
@@ -387,6 +518,10 @@ empresa-# WHERE nombre_empleado LIKE 'G%Z%';
 empresa=# SELECT nombre_empleado, fecha_ingreso_empleado FROM empleado
 empresa-# WHERE EXTRACT( MONTH FROM fecha_ingreso_empleado) = 04
 empresa-# OR EXTRACT( MONTH FROM fecha_ingreso_empleado) = 09;
+```
+
+Resultado:
+```sql
  nombre_empleado | fecha_ingreso_empleado
 -----------------+------------------------
  GARCIA, OCTAVIO | 1986-09-10
@@ -400,6 +535,10 @@ empresa=# SELECT nombre_empleado, SUM(salario_base_empleado + COALESCE(comision_
 empresa-# FROM empleado
 empresa-# WHERE CAST(salario_base_empleado + COALESCE(comision_empleado, 0) as TEXT) LIKE '2___'
 empresa-# GROUP BY nombre_empleado;
+```
+
+Resultado:
+```sql
  nombre_empleado | salario_total
 -----------------+---------------
  CAMPOS, ROMULO  |          2000
@@ -416,6 +555,10 @@ empresa-# GROUP BY nombre_empleado;
 ```sql
 empresa=# SELECT codigo_empleado, codigo_departamento FROM empleado
 empresa-# WHERE CAST(codigo_departamento as TEXT) NOT LIKE '111';
+```
+
+Resultado:
+```sql
  codigo_empleado | codigo_departamento
 -----------------+---------------------
              110 |                 121
@@ -430,13 +573,17 @@ empresa-# WHERE CAST(codigo_departamento as TEXT) NOT LIKE '111';
 (26 filas)
 ```
 
-**28. Enumere todos los empleados excepto "DIRECCION" y "ORGANIZACION" en orden ascendente de salarios.**
+**28. Enumere todos los empleados excepto `DIRECCION` y `ORGANIZACION` en orden ascendente de salarios.**
 ```sql
 empresa=# SELECT codigo_empleado, nombre_empleado, SUM(salario_base_empleado + COALESCE(comision_empleado, 0)) as salario_total
 empresa-# FROM empleado
 empresa-# WHERE codigo_departamento <> 110 AND codigo_departamento <> 100 AND codigo_departamento <> 120
 empresa-# GROUP BY codigo_empleado, nombre_empleado
 empresa-# ORDER BY salario_base_empleado + COALESCE(comision_empleado, 0) ASC;
+```
+
+Resultado:
+```sql
  codigo_empleado | nombre_empleado  | salario_total
 -----------------+------------------+---------------
              410 | MUOZ, AZUCENA    |          1750
@@ -455,6 +602,10 @@ empresa-# ORDER BY salario_base_empleado + COALESCE(comision_empleado, 0) ASC;
 empresa=# SELECT nombre_empleado, fecha_ingreso_empleado
 empresa-# FROM empleado
 empresa-# WHERE EXTRACT(YEAR FROM fecha_ingreso_empleado) <> 1996;
+```
+
+Resultado:
+```sql
  nombre_empleado  | fecha_ingreso_empleado
 ------------------+------------------------
  PONS, CESAR      | 1970-02-15
@@ -477,6 +628,10 @@ empresa-# WHERE EXTRACT(YEAR FROM fecha_ingreso_empleado) <> 1996;
 empresa=# SELECT nombre_empleado, fecha_ingreso_empleado
 empresa-# FROM empleado
 empresa-# WHERE EXTRACT(MONTH FROM fecha_ingreso_empleado) <> 03;
+```
+
+Resultado:
+```sql
  nombre_empleado  | fecha_ingreso_empleado
 ------------------+------------------------
  PONS, CESAR      | 1970-02-15
@@ -503,6 +658,10 @@ empresa=# SELECT codigo_empleado, nombre_empleado, codigo_departamento, fecha_in
 empresa-# FROM empleado
 empresa-# WHERE EXTRACT(YEAR FROM fecha_ingreso_empleado) = 1996
 empresa-# AND codigo_departamento BETWEEN 111 AND 112;
+```
+
+Resultado:
+```sql
  codigo_empleado | nombre_empleado | codigo_departamento | fecha_ingreso_empleado
 -----------------+-----------------+---------------------+------------------------
              440 | DURAN, LIVIA    |                 111 | 1996-02-28
@@ -511,10 +670,14 @@ empresa-# AND codigo_departamento BETWEEN 111 AND 112;
 (3 filas)
 ```
 
-**32. Muestra los nombres de los empleados que no trabajan como ORGANIZACION.**
+**32. Muestra los nombres de los empleados que no trabajan como `ORGANIZACION`.**
 ```sql
 empresa=# SELECT nombre_empleado FROM empleado
 empresa-# WHERE codigo_departamento <> 120;
+```
+
+Resultado:
+```sql
  nombre_empleado
 ------------------
  PONS, CESAR
@@ -529,12 +692,16 @@ empresa-# WHERE codigo_departamento <> 120;
 (33 filas)
 ```
 
-**33. Muestre los nombres de los empleados que no trabajan como ORGANIZACION o DIRECCION.**
+**33. Muestre los nombres de los empleados que no trabajan como `ORGANIZACION` o `DIRECCION`.**
 ```sql
 empresa=# SELECT nombre_empleado FROM empleado
 empresa-# WHERE NOT codigo_departamento = 120
 empresa-# AND NOT codigo_departamento = 110
 empresa-# AND NOT codigo_departamento = 100;
+```
+
+Resultado:
+```sql
  nombre_empleado
 ------------------
  PONS, CESAR
@@ -552,6 +719,10 @@ empresa-# AND NOT codigo_departamento = 100;
 **34. Muestra el número total de empleados que trabajan en la empresa.**
 ```sql
 empresa=# SELECT COUNT(nombre_empleado) FROM empleado;
+```
+
+Resultado:
+```sql
  count
 -------
     34
@@ -561,6 +732,10 @@ empresa=# SELECT COUNT(nombre_empleado) FROM empleado;
 ```sql
 empresa=# SELECT SUM(salario_base_empleado + COALESCE(comision_empleado, 0)) as salario_total
 empresa-# FROM empleado;
+```
+
+Resultado:
+```sql
  salario_total
 ---------------
         116700
@@ -572,29 +747,41 @@ empresa=# SELECT ROUND(AVG(salario_base_empleado + COALESCE(comision_empleado, 0
 empresa-#     MAX(salario_base_empleado + COALESCE(comision_empleado, 0)) as salario_maximo,
 empresa-#     MIN(salario_base_empleado + COALESCE(comision_empleado, 0)) as salario_minimo
 empresa-# FROM empleado;
+```
+
+Resultado:
+```sql
  media_salario | salario_maximo | salario_minimo
 ---------------+----------------+----------------
        3432.35 |           7200 |           1750
 (1 fila)
 ```
 
-**37. Muestra el salario máximo que se paga a un empleado de FINANZAS.**
+**37. Muestra el salario máximo que se paga a un empleado de `FINANZAS`.**
 ```sql
 empresa=# SELECT MAX(salario_base_empleado + COALESCE(comision_empleado, 0)) as salario_maximo
 empresa-# FROM empleado
 empresa-# WHERE codigo_departamento = 130;
+```
+
+Resultado:
+```sql
  salario_maximo
 ----------------
            4200
 (1 fila)
 ```
 
-**38. Muestra el salario mínimo que se paga a cualquier DIRECTOR.**
+**38. Muestra el salario mínimo que se paga a cualquier `DIRECTOR`.**
 ```sql
 empresa=# SELECT MIN(salario_base_empleado + COALESCE(comision_empleado, 0)) as salario_minimo
 empresa-# FROM empleado
 empresa-# WHERE codigo_departamento = 110
 empresa-# OR codigo_departamento = 100;
+```
+
+Resultado:
+```sql
  salario_minimo
 ----------------
            2000
@@ -606,6 +793,10 @@ empresa-# OR codigo_departamento = 100;
 empresa=# SELECT ROUND(AVG(salario_base_empleado + COALESCE(comision_empleado, 0)), 2) as media_salario
 empresa-# FROM empleado
 empresa-# WHERE numero_hijos_empleado >=1;
+```
+
+Resultado:
+```sql
  media_salario
 ---------------
        3625.00
@@ -617,6 +808,10 @@ empresa-# WHERE numero_hijos_empleado >=1;
 empresa=# SELECT ROUND(AVG(salario_base_empleado + COALESCE(comision_empleado, 0)), 2) as media_salario
 empresa-# FROM empleado
 empresa-# WHERE numero_hijos_empleado = 0;
+```
+
+Resultado:
+```sql
  media_salario
 ---------------
        3157.14
@@ -628,6 +823,10 @@ empresa-# WHERE numero_hijos_empleado = 0;
 empresa=# SELECT codigo_empleado, extension_telefonica_empleado
 empresa-# FROM empleado
 empresa-# ORDER BY extension_telefonica_empleado ASC;
+```
+
+Resultado:
+```sql
  codigo_empleado | extension_telefonica_empleado
 -----------------+-------------------------------
              210 |                           200
@@ -642,8 +841,7 @@ empresa-# ORDER BY extension_telefonica_empleado ASC;
 (34 filas)
 ```
 
-**42. Hallar la comisión, nombre y salario de los empleados con más de tres hijos, clasificados por comisión, y dentro de
-comisión por orden alfabético del nombre. 3 filas.**
+**42. Hallar la comisión, nombre y salario de los empleados con más de tres hijos, clasificados por comisión, y dentro de comisión por orden alfabético del nombre. 3 filas.**
 
 >Revisando la base de datos, en realidad solo podrían aparecerte 2 nombres, por lo tanto son 2 filas.
 
@@ -654,6 +852,10 @@ empresa-# WHERE numero_hijos_empleado = 3
 empresa-# AND comision_empleado IS NOT NULL
 empresa-# GROUP BY comision_empleado, nombre_empleado
 empresa-# ORDER BY nombre_empleado ASC;
+```
+
+Resultado:
+```sql
  comision_empleado | nombre_empleado | salario_total
 -------------------+-----------------+---------------
                800 | GARCIA, OCTAVIO |          4600
@@ -667,6 +869,7 @@ empresa-# ORDER BY nombre_empleado ASC;
 >      -subir presupuesto 7,23 ===> 1.0723
 >      -mes de octubre = 10
 >      -total 3 meses hasta terminar año
+
 ```sql
 empresa=# SELECT nombre_departamento,
 empresa-#     ROUND(presupuesto_departamento/12, 3) as presupuesto_mensual,
@@ -677,6 +880,10 @@ empresa-# FROM departamento
 empresa-# WHERE (presupuesto_departamento/12) > 700
 empresa-# GROUP BY nombre_departamento, presupuesto_departamento
 empresa-# ORDER BY nombre_departamento ASC;
+```
+
+Resultado:
+```sql
  nombre_departamento | presupuesto_mensual | presupuesto_mensual_con_incremento | incremento | presupuesto_final
 ---------------------+---------------------+------------------------------------+------------+-------------------
  DIRECCION COMERCIAL |            1250.000 |                           1340.375 |     90.375 |         15271.125
@@ -686,10 +893,15 @@ empresa-# ORDER BY nombre_departamento ASC;
 (4 filas)
 ```
 
+**44. Muestra el campo nombre_empleado completo de todos los empleados, pero ordenado por su nombre. Pista: usar función que busque la posición de un carácter en una cadena. 34 filas, empezando por Alba, Adriana y acabando por Mora, Valeriana.**
 ```sql
 empresa=# SELECT nombre_empleado
 empresa-# FROM empleado
 empresa-# ORDER BY SUBSTRING(nombre_empleado, '[^ ]* (.*)') ASC;
+```
+
+Resultado:
+```sql
  nombre_empleado
 ------------------
  ALBA, ADRIANA
@@ -714,6 +926,10 @@ empresa-#     (numero_hijos_empleado*100) AS gratificacion
 empresa-# FROM empleado
 empresa-# WHERE (numero_hijos_empleado*100) < (salario_base_empleado/10)
 empresa-# ORDER BY nombre_empleado ASC;
+```
+
+Resultado:
+```sql
  nombre_empleado  | numero_hijos_empleado | gratificacion_no_superar | gratificacion
 ------------------+-----------------------+--------------------------+---------------
  AGUIRRE, AUREO   |                     2 |                  310.000 |           200
@@ -760,6 +976,10 @@ empresa-# WHERE codigo_departamento = 110
 empresa-# OR codigo_departamento = 111
 empresa-# GROUP BY nombre_empleado, codigo_departamento, numero_hijos_empleado, hijos_por_salario
 empresa-# ORDER BY SUBSTRING(nombre_empleado, '[^ ]* (.*)') ASC;
+```
+
+Resultado:
+```sql
  nombre_empleado  | codigo_departamento | salario_total | hijos_por_salario | numero_hijos_empleado
 ------------------+---------------------+---------------+-------------------+-----------------------
  AGUIRRE, AUREO   |                 111 |          4200 |               4.2 |                     2
@@ -786,6 +1006,10 @@ empresa-# WHERE EXTRACT(YEAR from fecha_ingreso_empleado) >= 1997
 empresa-# OR EXTRACT(YEAR from fecha_ingreso_empleado) = 1976
 empresa-# GROUP BY nombre_empleado, año_ingreso
 empresa-# ORDER BY nombre_empleado ASC;
+```
+
+Resultado:
+```sql
  nombre_empleado  | salario_total | año_ingreso
 ------------------+---------------+-------------
  FIERRO, CLAUDIA  |          4000 |        1998

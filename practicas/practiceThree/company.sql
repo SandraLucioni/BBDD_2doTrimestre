@@ -129,8 +129,8 @@ FROM empleado
 WHERE codigo_departamento = 130
 OR codigo_departamento = 120
 OR codigo_departamento= 122
-AND salario_total > 3000
-GROUP BY nombre_empleado;
+AND  salario_base_empleado + COALESCE(comision_empleado, 0) > 3000
+GROUP BY nombre_empleado, codigo_departamento;
 
 -- 9. Muestre la lista de empleados que se han unido a la empresa antes del 30 de junio de 1.990 o después del 31 de diciembre de 1.997. -->
 SELECT fecha_ingreso_empleado FROM empleado
